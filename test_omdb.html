@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title> Exercice </title>
+		<meta http-equiv="Content-Type" content="text/html" charset="UTF-8"/>
+	</head>
+	
+	<body>
+	<style>
+	@media(max-width:699px) {
+		div {
+		    font-size: 14px;
+			}
+		button span {
+		    display: none;
+			}
+		div img {
+	      	height: 250px;
+	      	width: 200px;
+	   		}
+		} 
+		@media(min-width:700px) {
+            button img {
+      			display: none;
+		     	}
+		 	div {
+		  		font-size: 20px;
+		  		}
+ 		}
+ 		body {
+			background-color : #2C322E;
+			color : #E9E9E9;
+ 			}
+	</style>
+
+
+	<center>
+		<label title="enter the movie name"> 
+			<span class="labelText"> Movie name : </span>
+			<input type="text" id="movieName" onkeydown="return runScript(event)"   placeholder="Gladiator, Star Wars, ..."></input>
+		</label>
+		<button type="button" id="movieSearch"> <span>search movie </span> <img src="images/searchIcon.png" height="20"/></button>
+
+		<div id="info"> </div>
+
+	</center>
+
+    <script>
+	var button  = document.getElementById( "movieSearch") 
+	var div = document.getElementById("info") 
+	var movie  = document.getElementById( "movieName" )  
+
+function createParagraphAndImage() {
+	 paragraph = document.createElement("p")
+	paragraph.innerText=text
+	var img = document.createElement("IMG")
+	img.src = images[i]
+	if (search[i].Poster!="N/A")
+	paragraph.appendChild(img)
+	return paragraph
+}
+
+	var xhr = new XMLHttpRequest() 
+
+	button.addEventListener('click', asksMovie) 
+
+	function runScript(e) {  
+	    if (e.keyCode == 13) {
+	       asksMovie();
+	    }
+	}
+	xhr.addEventListener( "load",  verifyResponse ) 
+	xhr.addEventListener("error", displayError)
+
+	function displayError() {
+	alert('error')
+	}
+
+	function displayMatches() {
+	div.innerHTML = ""
+	 text=" "
+	parser = JSON.parse(xhr.response)
+	search = parser.Search
+	images = new Array()
+	if (typeof search ==='undefined' ) 
+		{div.innerText="Movie not found"}
+	for (i=0; i<search.length;i++){
+		images[i]=search[i].Poster
+		text= "Title : " +search[i].Title + "\n" + "Type : "+ search[i].Type + "\n" + "Year : " +search[i].Year + "\n"+ "Poster : " + "\n" 
+	 	div.appendChild(createParagraphAndImage()); // for each loop add the text + the poster image (if there is one) with the createParagraphAndImage() function'
+
+	 }
+	}
+   
+	function verifyResponse() {
+		if (xhr.readyState === 4) { 	//request finished and response ready
+	        if (xhr.status === 200) {   
+	           displayMatches() 
+	        } else {
+			   displayError()
+	        }
+	        
+	    } else {
+	    	alert( xhr.readyState ) 
+	    }
+	    
+	};
+	
+	function asksMovie () {//Function called when enter pressed or "search movie pressed"
+		url = "http://www.omdbapi.com/?s="+movie.value+"&r=json"
+	    
+	    xhr.open( "GET", url, true ) 
+		xhr.send( null )
+	};
+
+	</script>
+ 	</body>
+</html>
